@@ -3,10 +3,15 @@ AzureAd.whitelistedFields = ['id', 'userPrincipalName', 'mail', 'displayName', '
 OAuth.registerService('azureAd', 2, null, function (query) {
   var tokens = getTokensFromCode(AzureAd.resources.microsoftGraph.resourceUri, query.code);
   var microsoftGraphUser = AzureAd.resources.microsoftGraph.getUser(tokens.accessToken);
+
+  var emailAddress = microsoftGraphUser.mail || microsoftGraphUser.userPrincipalName;
+
   var serviceData = {
     accessToken: tokens.accessToken,
-    expiresAt: (+new Date) + (1000 * tokens.expiresIn)
+    expiresAt: (+new Date) + (1000 * tokens.expiresIn),
+    email: emailAddress
   };
+
   var fields = _.pick(microsoftGraphUser, AzureAd.whitelistedFields);
 
   _.extend(serviceData, fields);
@@ -16,8 +21,6 @@ OAuth.registerService('azureAd', 2, null, function (query) {
   // log in attempt)
   if (tokens.refreshToken)
     serviceData.refreshToken = tokens.refreshToken;
-
-  var emailAddress = microsoftGraphUser.mail || microsoftGraphUser.userPrincipalName;
 
   var options = {
     profile: {
