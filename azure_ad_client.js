@@ -23,7 +23,7 @@ AzureAd.requestCredential = function (options, credentialRequestCompleteCallback
   if (options.requestPermissions)
     scope = options.requestPermissions;
 
-  var prompt = '&prompt=login';
+  var prompt = '&prompt=consent';
   if (typeof options.loginPrompt === 'string') {
     if (options.loginPrompt === "")
       prompt = '';
